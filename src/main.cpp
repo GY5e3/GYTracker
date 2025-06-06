@@ -8,10 +8,10 @@
 #include <userver/server/handlers/tests_control.hpp>
 #include <userver/testsuite/testsuite_support.hpp>
 
+#include <userver/storages/secdist/component.hpp>
 
 #include <userver/utils/daemon_run.hpp>
 
-#include <hello.hpp>
 #include <announce_http.hpp>
 
 int main(int argc, char* argv[]) {
@@ -22,9 +22,10 @@ int main(int argc, char* argv[]) {
                               .Append<userver::clients::dns::Component>()
                               .Append<userver::server::handlers::TestsControl>()
                               .Append<userver::congestion_control::Component>()
-                              .Append<another_service::Hello>()
-                              .Append<another_service::AnnounceHTTP>()
-        ;
+                              .Append<userver::components::Redis>("key-value-database")
+                              .Append<userver::components::Secdist>()
+                              .Append<userver::components::DefaultSecdistProvider>()
+                              .Append<another_service::AnnounceHTTP>();
 
     return userver::utils::DaemonMain(argc, argv, component_list);
 }
